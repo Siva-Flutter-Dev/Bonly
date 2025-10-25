@@ -11,3 +11,5 @@ class RegisterButtonPressed extends RegisterEvent {
     required this.password,
   });
 }
+
+class TogglePasswordRegister extends RegisterEvent{}

@@ -7,19 +7,20 @@ class PrimaryButton extends StatelessWidget {
   final String value;
   final VoidCallback onTab;
   final bool isLoading;
-  const PrimaryButton({super.key, required this.value, required this.onTab, this.isLoading=false});
+  final bool isDisable;
+  const PrimaryButton({super.key, required this.value, required this.onTab, this.isLoading=false,this.isDisable=false});
 
   @override
   Widget build(BuildContext context) {
     final isMobile = context.isMobile();
     var currentWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: onTab,
+      onTap: !isDisable?onTab:null,
       child: Container(
         height: isMobile?48:58,
         width: currentWidth,
         decoration: BoxDecoration(
-          color: AppTheme.primaryColor,
+          color: isDisable?AppTheme.grey:AppTheme.primaryColor,
           borderRadius: BorderRadius.circular(12)
         ),
         child: Center(

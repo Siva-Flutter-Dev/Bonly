@@ -51,7 +51,7 @@ class Routing{
   }
 
   static void replace({required String location,required BuildContext context, Object? values}){
-    context.push(location,extra: values);
+    context.go(location,extra: values);
   }
 
   static void back({required BuildContext context,Object? values}){

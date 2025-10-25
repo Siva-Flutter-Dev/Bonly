@@ -1,17 +1,22 @@
+import 'package:bondly/core/constants/app_constants.dart';
 import 'package:bondly/core/themes/app_theme.dart';
+import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/core/utils/assets_constants.dart';
 import 'package:bondly/core/utils/extentions.dart';
-import 'package:bondly/features/profile_screen/profile_bloc/profile_bloc.dart';
-import 'package:bondly/features/profile_screen/profile_bloc/profile_event.dart';
-import 'package:bondly/features/profile_screen/profile_bloc/profile_state.dart';
-import 'package:bondly/features/profile_screen/service/profile_services.dart';
+import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
+import 'package:bondly/features/profile_screen/presentation/bloc/profile_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../core/paint/zebra_paint.dart';
-import '../../data/services/store_user_data.dart';
-import '../../shared/global_widgets/text.dart';
+import '../../../core/paint/zebra_paint.dart';
+import '../../../data/services/store_user_data.dart';
+import '../../../shared/global_widgets/text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bondly/features/injection_container.dart' as di;
+import '../domain/usecase/profile_usecase.dart';
+import '../domain/usecase/update_profile_usecase.dart';
+import '../domain/usecase/upload_profile_usecase.dart';
+import 'bloc/profile_event.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -22,7 +27,11 @@ class ProfileScreen extends StatelessWidget {
     final isMobile = context.isMobile();
     var currentWidth = context.mediaQueryWidth;
     return BlocProvider(
-      create: (_) => ProfileBloc(profileService: ProfileService())..add(LoadUserProfile()),
+      create: (_) => ProfileBloc(
+        getProfile: di.sl<GetProfile>(),
+        uploadProfileImage: di.sl<UploadProfileImage>(),
+        updateProfileImage: di.sl<UpdateProfileImage>(),
+      )..add(ProfileFetched()),
       child: Scaffold(
         body: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
@@ -48,7 +57,15 @@ class ProfileScreen extends StatelessWidget {
                               spacing: 20,
                               children: [
                                 Image.asset(AssetsPath.editIcon,height: 24,width: 24,),
-                                Image.asset(AssetsPath.settingsIcon,height: 24,width: 24,),
+                                GestureDetector(
+                                    onTap: (){},
+                                    child: Image.asset(AssetsPath.settingsIcon,height: 24,width: 24,)),
+                                GestureDetector(
+                                    onTap: (){
+                                      storeUserData.setBoolean(AppConstants.loginSession, false);
+                                      Routing.replace(location: AppRouteConstants.loginRoute, context: context);
+                                    },
+                                    child: Icon(CupertinoIcons.power,color: Colors.red,fontWeight: FontWeight.bold,)),
                               ],
                             )
                           ],

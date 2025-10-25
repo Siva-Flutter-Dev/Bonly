@@ -1,4 +1,5 @@
 import 'package:bondly/features/login_screen/presentation/bloc/login_bloc.dart';
+import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +13,9 @@ class BlocInit{
     ),
     BlocProvider<LoginBloc>(
       create: (_) => di.sl<LoginBloc>(),
+    ),
+    BlocProvider<ProfileBloc>(
+      create: (_) => di.sl<ProfileBloc>(),
     ),
   ];
 }

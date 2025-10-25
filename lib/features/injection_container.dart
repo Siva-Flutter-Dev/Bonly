@@ -1,4 +1,11 @@
 import 'package:bondly/features/login_screen/auth_service/auth_service.dart';
+import 'package:bondly/features/profile_screen/data/repository/profile_repository_impl.dart';
+import 'package:bondly/features/profile_screen/data/service/profile_services.dart';
+import 'package:bondly/features/profile_screen/domain/repository/profile_repository.dart';
+import 'package:bondly/features/profile_screen/domain/usecase/profile_usecase.dart';
+import 'package:bondly/features/profile_screen/domain/usecase/update_profile_usecase.dart';
+import 'package:bondly/features/profile_screen/domain/usecase/upload_profile_usecase.dart';
+import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
 import 'package:bondly/features/register_screen/auth_service/auth_service.dart';
 import 'package:bondly/features/register_screen/data/datasources/register_datasources.dart';
 import 'package:bondly/features/register_screen/data/repository/register_repository_impl.dart';
@@ -7,7 +14,6 @@ import 'package:bondly/features/register_screen/domain/usecases/register_usecase
 import 'package:bondly/features/register_screen/presentation/bloc/register_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
-
 import '../core/network/network_info.dart';
 import 'login_screen/data/datasources/login_datasources.dart';
 import 'login_screen/data/repository/login_repository_impl.dart';
@@ -18,30 +24,30 @@ import 'login_screen/presentation/bloc/login_bloc.dart';
 final sl = GetIt.instance;
 
 void coreInit(){
-  // Network
+  /// Network
   sl.registerLazySingleton<NetworkInfo>(
         () => NetworkInfoImpl(connectivity: Connectivity()),
   );
 }
 
 void registerInit() {
-  // RegisterService with network check
+  /// RegisterService with network check
   sl.registerLazySingleton(() => RegisterService(networkInfo: sl()));
 
-  // Data sources
+  /// Data sources
   sl.registerLazySingleton<RegisterRemoteDataSource>(
         () => RegisterRemoteDataSourceImpl(registerService: sl()),
   );
 
-  // Repositories
+  /// Repositories
   sl.registerLazySingleton<RegisterRepository>(
         () => RegisterRepositoryImpl(remoteDataSource: sl()),
   );
 
-  // Use cases
+  /// Use cases
   sl.registerLazySingleton(() => RegisterUser(sl()));
 
-  // Bloc
+  /// Bloc
   sl.registerFactory(() => RegisterBloc(registerUser: sl()));
 }
 
@@ -64,5 +70,30 @@ void loginInit() {
 
   // Bloc
   sl.registerFactory(() => LoginBloc(loginUser: sl()));
+}
+
+void profileInit(){
+  // PROFILE FEATURE
+
+// Service
+  sl.registerLazySingleton(() => ProfileService(networkInfo: sl()));
+
+// Repository
+  sl.registerLazySingleton<ProfileRepository>(
+        () => ProfileRepositoryImpl(sl()),
+  );
+
+// UseCases
+  sl.registerLazySingleton(() => GetProfile(sl()));
+  sl.registerLazySingleton(() => UploadProfileImage(sl()));
+  sl.registerLazySingleton(() => UpdateProfileImage(sl()));
+
+// Bloc
+  sl.registerFactory(() => ProfileBloc(
+    getProfile: sl(),
+    uploadProfileImage: sl(),
+    updateProfileImage: sl(),
+  ));
+
 }
 

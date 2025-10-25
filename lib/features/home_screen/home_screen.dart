@@ -1,6 +1,6 @@
 import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/extentions.dart';
-import 'package:bondly/features/profile_screen/profile_screen.dart';
+import 'package:bondly/features/profile_screen/presentation/profile_screen.dart';
 import 'package:bondly/shared/global_widgets/text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

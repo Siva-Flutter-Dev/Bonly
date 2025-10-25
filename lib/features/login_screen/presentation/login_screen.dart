@@ -1,6 +1,7 @@
 import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/core/utils/extentions.dart';
+import 'package:bondly/core/validators/validators.dart';
 import 'package:bondly/features/login_screen/presentation/bloc/login_event.dart';
 import 'package:bondly/features/login_screen/presentation/bloc/login_state.dart';
 import 'package:bondly/shared/global_widgets/primary_button.dart';
@@ -19,17 +20,6 @@ class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final emailCtl = TextEditingController();
   final passwordCtl = TextEditingController();
-
-  void _onLoginPressed(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      BlocProvider.of<LoginBloc>(context).add(
-        LoginSubmitted(
-          email: emailCtl.text,
-          password: passwordCtl.text,
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,54 +66,90 @@ class LoginScreen extends StatelessWidget {
                   Container(
                     padding: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: 40,vertical: 20),
                     margin: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: 40,vertical: 20),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        spacing: 20,
-                        children: [
-                          CTextField(
-                            controller: emailCtl,
-                            label: "Email",
-                            validator: (val) => val == null || !val.contains('@') ? 'Enter valid email' : null,
-                            prefixIcon: Icon(CupertinoIcons.mail,color: AppTheme.black.withValues(alpha: 0.2),),
-                          ),
-                          CTextField(
-                            controller: passwordCtl,
-                            label: "Password",
-                            validator: (val) => val == null || val.length < 6 ? 'Min 6 characters' : null,
-                            suffixIcon: Icon(CupertinoIcons.eye,color: AppTheme.black.withValues(alpha: 0.2),size: 18,),
-                            prefixIcon: Icon(CupertinoIcons.lock_circle,color: AppTheme.black.withValues(alpha: 0.2),),
-                          ),
-                          SizedBox(height: 10,),
-                          PrimaryButton(
-                            isLoading: state is LoginLoading?true:false,
-                            value: "Login",
-                            onTab: ()=>_onLoginPressed(context),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CText(
-                                text: "Haven’t registered yet? ",
-                                fontSize: isMobile?AppTheme.medium:AppTheme.big,
-                                fontWeight: FontWeight.w400,
-                                textColor: AppTheme.black,
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  Routing.push(location: AppRouteConstants.registerRoute, context: context);
-                                },
-                                child: CText(
-                                  text: "Register",
-                                  fontSize: isMobile?AppTheme.medium:AppTheme.big,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppTheme.secondaryColor,
+                    child: Column(
+                      spacing: 20,
+                      children: [
+                        CTextField(
+                          controller: emailCtl,
+                          label: "Email",
+                          errorText: state.email,
+                          prefixIcon: Icon(CupertinoIcons.mail,color: AppTheme.black.withValues(alpha: 0.2),),
+                          onChange: (v){
+                            final bloc = context.read<LoginBloc>();
+
+                            if (state is LoginFailure) {
+                              bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
+                            }else{
+                              bloc.add(EmailChangedLogin(v));
+                            }
+                          },
+                        ),
+                        CTextField(
+                          controller: passwordCtl,
+                          label: "Password",
+                          obscureText: !state.isPasswordVisible,
+                          errorText: state.password,
+                          suffixIcon: GestureDetector(
+                            onTap: (){
+                              final bloc = context.read<LoginBloc>();
+
+                              if (state is LoginFailure) {
+                                bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
+                              }else{
+                                bloc.add(TogglePassword());
+                              }
+                            },
+                              child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
+                          prefixIcon: Icon(CupertinoIcons.lock_circle,color: AppTheme.black.withValues(alpha: 0.2),),
+                          onChange: (v){
+                            final bloc = context.read<LoginBloc>();
+
+                            if (state is LoginFailure) {
+                              bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
+                            }else{
+                              bloc.add(PasswordChangedLogin(v));
+                            }
+                          },
+                        ),
+                        SizedBox(height: 10,),
+                        PrimaryButton(
+                          isLoading: state is LoginLoading?true:false,
+                          value: "Login",
+                          isDisable: (state.email!=null || state.password!=null || passwordCtl.text.isEmpty || emailCtl.text.isEmpty),
+                          onTab: (){
+                            if (state.email==null && state.password==null) {
+                              BlocProvider.of<LoginBloc>(context).add(
+                                LoginSubmitted(
+                                  email: emailCtl.text,
+                                  password: passwordCtl.text,
                                 ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
+                              );
+                            }
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CText(
+                              text: "Haven’t registered yet? ",
+                              fontSize: isMobile?AppTheme.medium:AppTheme.big,
+                              fontWeight: FontWeight.w400,
+                              textColor: AppTheme.black,
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                Routing.push(location: AppRouteConstants.registerRoute, context: context);
+                              },
+                              child: CText(
+                                text: "Register",
+                                fontSize: isMobile?AppTheme.medium:AppTheme.big,
+                                fontWeight: FontWeight.w500,
+                                textColor: AppTheme.secondaryColor,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
                     ),
                   )
                 ],

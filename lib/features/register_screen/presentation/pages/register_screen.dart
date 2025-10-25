@@ -1,3 +1,4 @@
+import 'package:bondly/core/validators/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,14 +91,19 @@ class RegisterScreen extends StatelessWidget {
                         CTextField(
                           controller: emailCtl,
                           label: "Email",
-                          validator: (val) => val == null || !val.contains('@') ? 'Enter valid email' : null,
+                          validator: (val) => val == null || !AppValidators.isEmailValid(val) ? 'Enter valid email' : null,
                           prefixIcon: Icon(CupertinoIcons.mail, color: AppTheme.black.withValues(alpha: 0.2)),
                         ),
                         CTextField(
                           controller: passwordCtl,
                           label: "Password",
-                          obscureText: true,
+                          obscureText: !state.isPasswordVisible,
                           validator: (val) => val == null || val.length < 6 ? 'Min 6 characters' : null,
+                          suffixIcon: GestureDetector(
+                              onTap: (){
+                                context.read<RegisterBloc>().add(TogglePasswordRegister());
+                              },
+                              child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
                           prefixIcon: Icon(CupertinoIcons.lock_circle, color: AppTheme.black.withValues(alpha: 0.2)),
                         ),
                         CTextField(

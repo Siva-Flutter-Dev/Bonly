@@ -6,6 +6,7 @@ import '../../core/themes/app_theme.dart';
 class CTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
+  final String? errorText;
   final bool obscureText;
   final TextInputType? keyboardType;
   final Function(String)? onChange;
@@ -17,6 +18,7 @@ class CTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.label,
+    this.errorText,
     this.onChange,
     this.keyboardType,
     this.obscureText = false,
@@ -57,6 +59,7 @@ class CTextField extends StatelessWidget {
             suffixIcon: suffixIcon,
             prefixIcon: prefixIcon,
             hintText: label,
+            errorText: errorText,
             hintStyle: TextStyle(
               color: AppTheme.grey,
               fontSize: AppTheme.medium,

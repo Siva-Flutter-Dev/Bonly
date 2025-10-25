@@ -1,11 +1,8 @@
-import 'package:bondly/core/constants/app_constants.dart';
 import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/core/utils/extentions.dart';
-import 'package:bondly/data/services/store_user_data.dart';
 import 'package:bondly/shared/global_widgets/text.dart';
 import 'package:flutter/material.dart';
-
 import '../../core/utils/assets_constants.dart';
 import '../../shared/global_widgets/primary_button.dart';
 
@@ -14,7 +11,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var storeUserData = StoreUserData();
+    // var storeUserData = StoreUserData();
     final isMobile = context.isMobile();
     var currentWidth = context.mediaQueryWidth;
     return Scaffold(
@@ -52,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
             PrimaryButton(
               value: "Let's Start",
               onTab: (){
-                storeUserData.setBoolean(AppConstants.onBoardSlide, true);
+                //storeUserData.setBoolean(AppConstants.onBoardSlide, true);
                 Routing.push(location: AppRouteConstants.loginRoute, context: context);
               },
             )

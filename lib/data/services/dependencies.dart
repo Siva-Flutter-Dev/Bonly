@@ -9,5 +9,6 @@ class AppInjector{
     di.coreInit();
     di.loginInit();
     di.registerInit();
+    di.profileInit();
   }
 }

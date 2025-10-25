@@ -26,8 +26,6 @@ class SplashScreen extends StatelessWidget {
           if (state is SplashLoaded) {
             if(storeUserData.getBoolean(AppConstants.loginSession)){
               Routing.replace(context: context, location: AppRouteConstants.homeRoute);
-            }else if(storeUserData.getBoolean(AppConstants.onBoardSlide)){
-              Routing.replace(context: context, location: AppRouteConstants.loginRoute);
             }else{
               Routing.replace(context: context, location: AppRouteConstants.welcomeRoute);
             }
