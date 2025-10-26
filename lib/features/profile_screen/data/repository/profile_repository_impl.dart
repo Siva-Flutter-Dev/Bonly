@@ -21,4 +21,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<void> updateProfileImage({required String rowId, required String fileId}) async {
     await service.updateUserProfileImage(rowId, fileId);
   }
+
+  @override
+  Future<void> logOutUser() async {
+    await service.logOutUser();
+  }
 }

@@ -1,52 +1,78 @@
-import 'package:appwrite/appwrite.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bondly/core/constants/app_constants.dart';
 import 'package:bondly/data/services/store_user_data.dart';
 import '../../../core/network/network_info.dart';
 import '../../../data/services/environment.dart';
 
 class AuthService {
-  late final Client client;
-  late final Account account;
+  late final SupabaseClient supabase;
   final NetworkInfo networkInfo;
 
   AuthService({required this.networkInfo}) {
-    client = Client()
-      ..setEndpoint(Environment.appwritePublicEndpoint)
-      ..setProject(Environment.appwriteProjectId);
-
-    account = Account(client);
+    supabase = SupabaseClient(
+      Environment.supabaseUrl,
+      Environment.supabaseAnonKey,
+    );
   }
 
-  Future<void> login({required String email, required String password}) async {
-    var storeUserData = StoreUserData();
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    final storeUserData = StoreUserData();
     final connected = await networkInfo.isConnected;
 
     if (!connected) {
       throw Exception('No Internet connection');
     }
+
     try {
       print("===========");
-      print("Network :$connected");
-      final currentUser = await account.get();
-      print(currentUser.name);
-      storeUserData.setBoolean(AppConstants.loginSession, true);
-      storeUserData.setString(AppConstants.userName, currentUser.name);
-      storeUserData.setString(AppConstants.userEmail, currentUser.email);
-      storeUserData.setString(AppConstants.userId, currentUser.$id);
-    } on AppwriteException catch (e) {
-      if (e.code == 401) {
-        print("=======401");
-        final session = await account.createEmailPasswordSession(email: email, password: password);
-        storeUserData.setBoolean(AppConstants.loginSession, true);
-        storeUserData.setString(AppConstants.userName, email.split('@').first);
-        storeUserData.setString(AppConstants.userEmail, email);
-        storeUserData.setString(AppConstants.userId, session.$id);
-        print(session.$id);
-      } else {
-        throw Exception(e.message ?? 'Login error');
+      print("Network: $connected");
+
+      // 1️⃣ Check if a session already exists
+      final currentSession = supabase.auth.currentSession;
+      final currentUser = supabase.auth.currentUser;
+
+      if (currentSession != null && currentUser != null) {
+        print("User already logged in: ${currentUser.email}");
+        await _storeUserData(storeUserData, currentUser);
+        return;
       }
+
+      // 2️⃣ No session → perform login
+      final response = await supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      final user = response.user;
+
+      if (user == null) {
+        throw Exception('Login failed — user is null');
+      }
+
+      await _storeUserData(storeUserData, user);
+      print("✅ Login successful: ${user.email}");
+    } on AuthException catch (e) {
+      print("❌ Auth error: ${e.message}");
+      throw Exception(e.message);
+    } catch (e) {
+      print("❌ Unexpected error: $e");
+      throw Exception('Unexpected login error');
     }
   }
 
-
+  Future<void> _storeUserData(
+      StoreUserData storeUserData,
+      User user,
+      ) async {
+    await storeUserData.setBoolean(AppConstants.loginSession, true);
+    await storeUserData.setString(
+      AppConstants.userName,
+      user.userMetadata?['name'] ?? user.email?.split('@').first ?? '',
+    );
+    await storeUserData.setString(AppConstants.userEmail, user.email ?? '');
+    await storeUserData.setString(AppConstants.userId, user.id);
+  }
 }

@@ -17,3 +17,5 @@ class ProfileError extends ProfileState {
 
   ProfileError({required this.message});
 }
+
+class LogOutState extends ProfileState{}

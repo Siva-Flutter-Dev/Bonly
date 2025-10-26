@@ -23,6 +23,7 @@ class LoginRepositoryImpl implements LoginRepository {
       print("Data Repository=====Success");
       return Right(user);
     } catch (e) {
+      print(e);
       print("Data Repository=====Failure");
       return Left(ServerFailure(e.toString()));
     }

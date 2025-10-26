@@ -1,19 +1,18 @@
-import 'package:appwrite/appwrite.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/network/network_info.dart';
 import '../../../data/services/environment.dart';
 
 class RegisterService {
-  late final Client client;
-  late final Account account;
   final NetworkInfo networkInfo;
+  late final SupabaseClient supabase;
 
   RegisterService({required this.networkInfo}) {
-    client = Client()
-      ..setEndpoint(Environment.appwritePublicEndpoint)
-      ..setProject(Environment.appwriteProjectId);
-
-    account = Account(client);
+    supabase = SupabaseClient(
+      Environment.supabaseUrl,
+      Environment.supabaseAnonKey,
+    );
   }
+
   Future<void> register({
     required String email,
     required String password,
@@ -24,19 +23,25 @@ class RegisterService {
     if (!connected) {
       throw Exception('No Internet connection');
     }
+
     try {
-      await account.create(
-        userId: ID.unique(),
+      final response = await supabase.auth.signUp(
         email: email,
         password: password,
-        name: name,
+        data: {'name': name},
       );
-      print('User registered successfully');
-    } on AppwriteException catch (e) {
-      print('Registration failed: ${e.message}');
+
+      if (response.user != null) {
+        print('✅ User registered successfully: ${response.user!.email}');
+      } else {
+        print('⚠️ Registration returned null user');
+      }
+    } on AuthException catch (e) {
+      print('❌ Registration failed: ${e.message}');
       throw Exception(e.message ?? 'Registration failed');
+    } catch (e) {
+      print('❌ Unexpected error: $e');
+      throw Exception('Registration failed');
     }
   }
-
-
 }

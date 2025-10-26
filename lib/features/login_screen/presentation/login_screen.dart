@@ -1,7 +1,6 @@
 import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/core/utils/extentions.dart';
-import 'package:bondly/core/validators/validators.dart';
 import 'package:bondly/features/login_screen/presentation/bloc/login_event.dart';
 import 'package:bondly/features/login_screen/presentation/bloc/login_state.dart';
 import 'package:bondly/shared/global_widgets/primary_button.dart';
@@ -11,13 +10,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../shared/auth_screen_widgets/auth_banner.dart';
+import '../../profile_screen/presentation/bloc/profile_bloc.dart';
+import '../../profile_screen/presentation/bloc/profile_event.dart';
 import 'bloc/login_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-
-  final _formKey = GlobalKey<FormState>();
   final emailCtl = TextEditingController();
   final passwordCtl = TextEditingController();
 
@@ -29,6 +28,8 @@ class LoginScreen extends StatelessWidget {
       listener: (context, state) {
         if (state is LoginSuccess) {
           Routing.replace(location: AppRouteConstants.homeRoute, context: context);
+          final bloc = context.read<LoginBloc>();
+          bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
         } else if (state is LoginFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
@@ -75,8 +76,6 @@ class LoginScreen extends StatelessWidget {
                           errorText: state.email,
                           prefixIcon: Icon(CupertinoIcons.mail,color: AppTheme.black.withValues(alpha: 0.2),),
                           onChange: (v){
-                            final bloc = context.read<LoginBloc>();
-
                             if (state is LoginFailure) {
                               bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
                             }else{
@@ -91,8 +90,6 @@ class LoginScreen extends StatelessWidget {
                           errorText: state.password,
                           suffixIcon: GestureDetector(
                             onTap: (){
-                              final bloc = context.read<LoginBloc>();
-
                               if (state is LoginFailure) {
                                 bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
                               }else{
@@ -102,8 +99,6 @@ class LoginScreen extends StatelessWidget {
                               child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
                           prefixIcon: Icon(CupertinoIcons.lock_circle,color: AppTheme.black.withValues(alpha: 0.2),),
                           onChange: (v){
-                            final bloc = context.read<LoginBloc>();
-
                             if (state is LoginFailure) {
                               bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
                             }else{
@@ -118,7 +113,7 @@ class LoginScreen extends StatelessWidget {
                           isDisable: (state.email!=null || state.password!=null || passwordCtl.text.isEmpty || emailCtl.text.isEmpty),
                           onTab: (){
                             if (state.email==null && state.password==null) {
-                              BlocProvider.of<LoginBloc>(context).add(
+                              bloc.add(
                                 LoginSubmitted(
                                   email: emailCtl.text,
                                   password: passwordCtl.text,

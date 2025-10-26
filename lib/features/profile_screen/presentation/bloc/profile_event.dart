@@ -7,3 +7,5 @@ class ProfileImageUploaded extends ProfileEvent {
 
   ProfileImageUploaded({required this.filePath});
 }
+
+class LogOutEvent extends ProfileEvent{}

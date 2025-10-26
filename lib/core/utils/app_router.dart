@@ -1,3 +1,4 @@
+import 'package:bondly/features/edit_profile/presentation/edit_profile_screen.dart';
 import 'package:bondly/features/home_screen/home_screen.dart';
 import 'package:bondly/features/login_screen/presentation/login_screen.dart';
 import 'package:bondly/features/register_screen/presentation/pages/register_screen.dart';
@@ -30,7 +31,17 @@ class AppRouter{
       ),
       GoRoute(
         path: AppRouteConstants.homeRoute,
-        builder: (context, state) => HomeScreen(),
+        builder: (context, state){
+          final extra = state.extra as Map<String,dynamic>?;
+          return HomeScreen(extra: extra,);
+        },
+      ),
+      GoRoute(
+        path: AppRouteConstants.editProfileRoute,
+        builder: (context, state){
+          final extra = state.extra as Map<String,dynamic>;
+          return EditProfileScreen(extras: extra,);
+        },
       ),
     ],
   );
@@ -43,6 +54,7 @@ class AppRouteConstants{
   static const String registerRoute = '/register';
   static const String homeRoute = '/home';
   static const String profileRoute = '/profile';
+  static const String editProfileRoute = '/editProfile';
 }
 
 class Routing{

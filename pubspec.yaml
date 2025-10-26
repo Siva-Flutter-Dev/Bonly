@@ -45,7 +45,8 @@ dependencies:
   cached_network_image: ^3.4.1
 
   # Data Base
-  appwrite: ^20.2.1
+  http:
+  supabase_flutter: ^2.10.3
   shared_preferences: ^2.5.3
 
   # Dependencies

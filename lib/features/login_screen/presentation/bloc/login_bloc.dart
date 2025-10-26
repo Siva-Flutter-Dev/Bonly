@@ -23,7 +23,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             email: event.email,
             password: event.password
         ));
-    print("Login Bloc=====Success");
     result.fold(
           (failure) => emit(LoginFailure(state.isPasswordVisible,message: "Invalid Email or Password",email: state.email,password: state.password)),
           (r) => emit(LoginSuccess(state.isPasswordVisible,result: r, email: state.email, password: state.password)),

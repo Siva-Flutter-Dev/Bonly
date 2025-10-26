@@ -12,15 +12,15 @@ import 'home_bloc/home_event.dart';
 import 'home_bloc/home_state.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  final List<Widget> _pages = const [
-    BlogDetailScreen(),
-    ProfileScreen(),
-  ];
+  final Map<String,dynamic>? extra;
+  const HomeScreen({super.key, required this.extra});
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const BlogDetailScreen(),
+      ProfileScreen(extra: extra??{},),
+    ];
     final isMobile = context.isMobile();
     var currentWidth = context.mediaQueryWidth;
     return BlocProvider(
@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   IndexedStack(
                     index: currentIndex,
-                    children: _pages,
+                    children: pages,
                   ),
                   Align(
                     alignment: AlignmentGeometry.lerp(AlignmentGeometry.bottomCenter, AlignmentGeometry.topCenter, 0.05)!,
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: _pages.asMap().entries.map((entry) {
+                        children: pages.asMap().entries.map((entry) {
                           final isSelected = entry.key == currentIndex;
 
                           return GestureDetector(

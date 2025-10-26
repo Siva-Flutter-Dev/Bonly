@@ -8,6 +8,7 @@ class CTextField extends StatelessWidget {
   final String label;
   final String? errorText;
   final bool obscureText;
+  final bool readOnly;
   final TextInputType? keyboardType;
   final Function(String)? onChange;
   final Widget? suffixIcon;
@@ -22,6 +23,7 @@ class CTextField extends StatelessWidget {
     this.onChange,
     this.keyboardType,
     this.obscureText = false,
+    this.readOnly = false,
     this.validator,
     this.suffixIcon,
     this.prefixIcon,
@@ -47,6 +49,7 @@ class CTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
+          readOnly: readOnly,
           style: TextStyle(
             color: AppTheme.black,
             fontSize: isMobile?AppTheme.medium:AppTheme.large,
@@ -82,7 +85,7 @@ class CTextField extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: AppTheme.secondaryColor,
+                color: readOnly?AppTheme.black.withValues(alpha: 0.1):AppTheme.secondaryColor,
                 width: 1,
               ),
             ),

@@ -1,7 +1,9 @@
+import 'package:bondly/features/edit_profile/presentation/bloc/edit_profile_bloc.dart';
 import 'package:bondly/features/login_screen/auth_service/auth_service.dart';
 import 'package:bondly/features/profile_screen/data/repository/profile_repository_impl.dart';
 import 'package:bondly/features/profile_screen/data/service/profile_services.dart';
 import 'package:bondly/features/profile_screen/domain/repository/profile_repository.dart';
+import 'package:bondly/features/profile_screen/domain/usecase/logout.dart';
 import 'package:bondly/features/profile_screen/domain/usecase/profile_usecase.dart';
 import 'package:bondly/features/profile_screen/domain/usecase/update_profile_usecase.dart';
 import 'package:bondly/features/profile_screen/domain/usecase/upload_profile_usecase.dart';
@@ -87,13 +89,37 @@ void profileInit(){
   sl.registerLazySingleton(() => GetProfile(sl()));
   sl.registerLazySingleton(() => UploadProfileImage(sl()));
   sl.registerLazySingleton(() => UpdateProfileImage(sl()));
+  sl.registerLazySingleton(() => LogOutButton(sl()));
 
 // Bloc
   sl.registerFactory(() => ProfileBloc(
     getProfile: sl(),
     uploadProfileImage: sl(),
     updateProfileImage: sl(),
+    logOutButton: sl(),
   ));
+
+}
+
+void editProfileInit(){
+  // PROFILE FEATURE
+
+// Service
+  //sl.registerLazySingleton(() => ProfileService(networkInfo: sl()));
+
+// Repository
+//   sl.registerLazySingleton<ProfileRepository>(
+//         () => ProfileRepositoryImpl(sl()),
+//   );
+
+// UseCases
+//   sl.registerLazySingleton(() => GetProfile(sl()));
+//   sl.registerLazySingleton(() => UploadProfileImage(sl()));
+//   sl.registerLazySingleton(() => UpdateProfileImage(sl()));
+//   sl.registerLazySingleton(() => LogOutButton(sl()));
+
+// Bloc
+  sl.registerFactory(() => EditProfileBloc());
 
 }
 
