@@ -17,7 +17,7 @@ class ProfileModel extends Profile {
 
   factory ProfileModel.fromMap(Map<String, dynamic> map) {
     return ProfileModel(
-      id: map['\$id'] ?? '',
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       profilePic: map['profilePic'] ?? '',
       email: map['email'] ?? '',

@@ -4,10 +4,13 @@ import 'package:bondly/core/utils/extentions.dart';
 import 'package:bondly/shared/global_widgets/text.dart';
 import 'package:flutter/material.dart';
 import '../../core/utils/assets_constants.dart';
+import '../../shared/global_widgets/carousel_slider.dart';
 import '../../shared/global_widgets/primary_button.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+  WelcomeScreen({super.key});
+
+  final List<String> images = [AssetsPath.welcomeIcon1,AssetsPath.welcomeIcon2];
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +18,7 @@ class WelcomeScreen extends StatelessWidget {
     final isMobile = context.isMobile();
     var currentWidth = context.mediaQueryWidth;
     return Scaffold(
+      backgroundColor: AppTheme.white,
       body: Container(
         width: currentWidth,
         padding: EdgeInsets.only(left: 16,right: 16,top: 150,bottom: 20),
@@ -24,10 +28,15 @@ class WelcomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset(
-                height: isMobile?170:230,
-                width: isMobile?190:250,
-                AssetsPath.welcomeIcon),
+            CarouselSliderWidget(
+              items: images.map((e){
+                return Image.asset(
+                    height: isMobile?currentWidth:currentWidth,
+                    width: isMobile?currentWidth:currentWidth,
+                    e);
+              }).toList(),
+              height: currentWidth,
+            ),
             Column(
               spacing: 30,
               children: [

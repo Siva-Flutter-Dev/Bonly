@@ -3,7 +3,6 @@ import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/core/utils/assets_constants.dart';
 import 'package:bondly/core/utils/extentions.dart';
-import 'package:bondly/features/profile_screen/domain/usecase/logout.dart';
 import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
 import 'package:bondly/features/profile_screen/presentation/bloc/profile_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,10 +12,6 @@ import '../../../core/paint/zebra_paint.dart';
 import '../../../data/services/store_user_data.dart';
 import '../../../shared/global_widgets/text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bondly/features/injection_container.dart' as di;
-import '../domain/usecase/profile_usecase.dart';
-import '../domain/usecase/update_profile_usecase.dart';
-import '../domain/usecase/upload_profile_usecase.dart';
 import 'bloc/profile_event.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -30,15 +25,14 @@ class ProfileScreen extends StatelessWidget {
     var storeUserData = StoreUserData();
     final isMobile = context.isMobile();
     var currentWidth = context.mediaQueryWidth;
-    // Dispatch event only once
     if (!_hasFetchedProfile) {
       _hasFetchedProfile = true;
       context.read<ProfileBloc>().add(ProfileFetched());
     }
     return Scaffold(
+      backgroundColor: AppTheme.white,
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          //context.read<ProfileBloc>().add(ProfileFetched());
           if (state is LogOutState) {
             storeUserData.setBoolean(AppConstants.loginSession, false);
             Routing.replace(location: AppRouteConstants.loginRoute, context: context);
@@ -46,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          //context.read<ProfileBloc>().add(ProfileFetched());
+          final bloc = context.read<ProfileBloc>();
           if (state is ProfileLoading) {
             return const Center(child: CircularProgressIndicator());
           }else if (state is ProfileLoaded) {
@@ -69,16 +63,20 @@ class ProfileScreen extends StatelessWidget {
                             spacing: 20,
                             children: [
                               GestureDetector(
-                                onTap: (){
-                                  Routing.push(
+                                onTap: ()async{
+                                  final value = await Routing.push(
                                     location: AppRouteConstants.editProfileRoute,
                                     context: context,
                                     values: {
+                                      'id':extra['id']??profile.id,
                                       'name':extra['name']??profile.name,
                                       'description':extra['description']??profile.description,
                                       'profilePic':profile.profilePic,
                                     }
                                   );
+                                  if (value != null) {
+                                    bloc.add(ProfileFetched());
+                                  }
                                 },
                                   child: Image.asset(AssetsPath.editIcon,height: 24,width: 24,)
                               ),
@@ -180,7 +178,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             );
           } else if (state is ProfileError) {
-            print(state.message);
             return Center(child: CText(text:"Error: ${state.message}"));
           } else {
             return const SizedBox();

@@ -1,4 +1,3 @@
-import 'package:bondly/features/register_screen/domain/entities/user_entities.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/login_entity.dart';
@@ -20,11 +19,8 @@ class LoginRepositoryImpl implements LoginRepository {
         email: email,
         password: password,
       );
-      print("Data Repository=====Success");
       return Right(user);
     } catch (e) {
-      print(e);
-      print("Data Repository=====Failure");
       return Left(ServerFailure(e.toString()));
     }
   }

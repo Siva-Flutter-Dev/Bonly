@@ -1,3 +1,8 @@
+import 'package:bondly/features/edit_profile/data/repository_impl/edit_profile_repository_impl.dart';
+import 'package:bondly/features/edit_profile/data/service/edit_profile_service.dart';
+import 'package:bondly/features/edit_profile/domain/repository/edit_profile_repository.dart';
+import 'package:bondly/features/edit_profile/domain/usecases/edit_profile_pic_usecase.dart';
+import 'package:bondly/features/edit_profile/domain/usecases/edit_profile_use_case.dart';
 import 'package:bondly/features/edit_profile/presentation/bloc/edit_profile_bloc.dart';
 import 'package:bondly/features/login_screen/auth_service/auth_service.dart';
 import 'package:bondly/features/profile_screen/data/repository/profile_repository_impl.dart';
@@ -12,6 +17,7 @@ import 'package:bondly/features/register_screen/auth_service/auth_service.dart';
 import 'package:bondly/features/register_screen/data/datasources/register_datasources.dart';
 import 'package:bondly/features/register_screen/data/repository/register_repository_impl.dart';
 import 'package:bondly/features/register_screen/domain/repositories/register_repo.dart';
+import 'package:bondly/features/register_screen/domain/usecases/profile_save_usecase.dart';
 import 'package:bondly/features/register_screen/domain/usecases/register_usecase.dart';
 import 'package:bondly/features/register_screen/presentation/bloc/register_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -105,21 +111,23 @@ void editProfileInit(){
   // PROFILE FEATURE
 
 // Service
-  //sl.registerLazySingleton(() => ProfileService(networkInfo: sl()));
+  sl.registerLazySingleton(() => EditProfileService(networkInfo: sl()));
 
 // Repository
-//   sl.registerLazySingleton<ProfileRepository>(
-//         () => ProfileRepositoryImpl(sl()),
-//   );
+  sl.registerLazySingleton<EditProfileRepository>(
+        () => EditProfileRepositoryImpl(sl()),
+  );
 
 // UseCases
-//   sl.registerLazySingleton(() => GetProfile(sl()));
-//   sl.registerLazySingleton(() => UploadProfileImage(sl()));
+  sl.registerLazySingleton(() => EditProfileCase(sl()));
+  sl.registerLazySingleton(() => EditProfilePicCase(sl()));
 //   sl.registerLazySingleton(() => UpdateProfileImage(sl()));
 //   sl.registerLazySingleton(() => LogOutButton(sl()));
 
 // Bloc
-  sl.registerFactory(() => EditProfileBloc());
+  sl.registerFactory(() => EditProfileBloc(
+      editProfileCase: sl()
+  ));
 
 }
 

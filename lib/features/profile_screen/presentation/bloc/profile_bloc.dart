@@ -43,8 +43,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final currentState = state;
     if (currentState is ProfileLoaded) {
       try {
-        final fileId = await uploadProfileImage(event.filePath);
-        await updateProfileImage(rowId: currentState.profile.id, fileId: fileId);
+        await uploadProfileImage(event.filePath);
+        //await updateProfileImage(rowId: currentState.profile.id, fileId: fileId);
         add(ProfileFetched());
       } catch (e) {
         emit(ProfileError(message: e.toString()));

@@ -3,7 +3,6 @@ import 'package:bondly/features/login_screen/presentation/bloc/login_bloc.dart';
 import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../features/injection_container.dart' as di;
 import '../../features/profile_screen/domain/usecase/logout.dart';
 import '../../features/profile_screen/domain/usecase/profile_usecase.dart';
@@ -29,7 +28,7 @@ class BlocInit{
       )..add(ProfileFetched()),
     ),
     BlocProvider<EditProfileBloc>(
-      create: (_) => EditProfileBloc(),
+      create: (_) => di.sl<EditProfileBloc>(),
     )
   ];
 }

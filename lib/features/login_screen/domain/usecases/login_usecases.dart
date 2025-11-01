@@ -12,9 +12,6 @@ class LoginUser implements UseCase<LoginEntity, LoginParams> {
 
   @override
   Future<Either<Failure, LoginEntity>> call(LoginParams params) async {
-    print("Domain Repository=====Success++O");
-    print("===========");
-    print(params);
     return await repository.loginUser(
       email: params.email,
       password: params.password,

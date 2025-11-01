@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/usecases/profile_save_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import 'register_event.dart';
 import 'register_state.dart';
@@ -11,10 +12,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<TogglePasswordRegister>(_togglePassword);
   }
 
-  Future<void> _onRegister(
-      RegisterButtonPressed event,
-      Emitter<RegisterState> emit,
-      ) async {
+  Future<void> _onRegister(RegisterButtonPressed event, Emitter<RegisterState> emit,) async {
     emit(RegisterLoading(state.isPasswordVisible));
 
     final result = await registerUser(RegisterParams(
@@ -23,16 +21,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       password: event.password,
     ));
 
+
+
     result.fold(
-          (failure) => emit(RegisterFailure(state.isPasswordVisible,message:failure.message)),
-          (r) => emit(RegisterSuccess(state.isPasswordVisible,result:r)),
+          (failure) {
+            emit(RegisterFailure(state.isPasswordVisible,message:failure.message));
+            },
+          (r){
+            emit(RegisterSuccess(state.isPasswordVisible,result:r));
+            },
     );
   }
 
-  void _togglePassword(
-      TogglePasswordRegister event,
-      Emitter<RegisterState> emit,
-      ) {
+  void _togglePassword(TogglePasswordRegister event, Emitter<RegisterState> emit,) {
     final newVisibility = !state.isPasswordVisible;
 
     if (state is RegisterInitial) {

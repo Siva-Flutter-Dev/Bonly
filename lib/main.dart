@@ -3,12 +3,8 @@ import 'package:bondly/core/constants/app_constants.dart';
 import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/data/services/dependencies.dart';
-import 'package:bondly/features/counter/counter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'features/injection_container.dart' as di;
-import 'features/register_screen/presentation/bloc/register_bloc.dart';
 
 void main() {
   AppInjector.injection();

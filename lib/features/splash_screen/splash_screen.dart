@@ -6,7 +6,6 @@ import 'package:bondly/features/splash_screen/splash_bloc/splash_event.dart';
 import 'package:bondly/features/splash_screen/splash_bloc/splash_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/utils/app_router.dart';
 import '../../core/utils/assets_constants.dart';
 import '../../core/utils/extentions.dart';

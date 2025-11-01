@@ -58,15 +58,15 @@ class AppRouteConstants{
 }
 
 class Routing{
-  static void push({required String location,required BuildContext context, Object? values}){
-   context.push(location,extra: values);
+  static Future<dynamic> push({required String location,required BuildContext context, Object? values}){
+   return context.push(location,extra: values);
   }
 
-  static void replace({required String location,required BuildContext context, Object? values}){
-    context.go(location,extra: values);
+  static Future<dynamic> replace({required String location,required BuildContext context, Object? values}) async {
+    return context.go(location,extra: values);
   }
 
-  static void back({required BuildContext context,Object? values}){
-    context.pop(values);
+  static Future<dynamic> back({required BuildContext context,Object? values}) async {
+    return context.pop(values);
   }
 }

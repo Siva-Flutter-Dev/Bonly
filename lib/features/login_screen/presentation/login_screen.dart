@@ -10,8 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../shared/auth_screen_widgets/auth_banner.dart';
-import '../../profile_screen/presentation/bloc/profile_bloc.dart';
-import '../../profile_screen/presentation/bloc/profile_event.dart';
 import 'bloc/login_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -39,6 +37,7 @@ class LoginScreen extends StatelessWidget {
         builder: (context, state){
           final bloc = context.read<LoginBloc>();
           return Scaffold(
+            backgroundColor: AppTheme.white,
             resizeToAvoidBottomInset: false,
             body: Container(
               width: currentWidth,

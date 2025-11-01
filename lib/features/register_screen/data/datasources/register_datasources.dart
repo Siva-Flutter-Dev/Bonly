@@ -29,7 +29,7 @@ class RegisterRemoteDataSourceImpl implements RegisterRemoteDataSource {
     );
 
     return UserModel(
-      id: 'N/A',
+      id: '',
       name: name,
       email: email,
     );

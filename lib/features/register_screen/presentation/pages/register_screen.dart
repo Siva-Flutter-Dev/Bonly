@@ -51,6 +51,7 @@ class RegisterScreen extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: AppTheme.white,
           resizeToAvoidBottomInset: false,
           body: Container(
             width: currentWidth,

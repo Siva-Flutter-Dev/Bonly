@@ -36,8 +36,6 @@ class ProfileService {
 
       if (response == null) throw Exception('Profile not found');
 
-      print("==================");
-      print(response);
 
       return ProfileModel.fromMap(response);
     } on PostgrestException catch (e) {
@@ -70,7 +68,6 @@ class ProfileService {
           .from(Environment.projectName)
           .getPublicUrl(filePathInBucket);
 
-      print('Uploaded file URL: $publicUrl');
       return publicUrl;
     } on StorageException catch (e) {
       throw Exception(e.message);
@@ -93,9 +90,8 @@ class ProfileService {
       if (oldFilePath != null && oldFilePath.isNotEmpty) {
         try {
           await supabase.storage.from(Environment.projectName).remove([oldFilePath]);
-          print('Old image deleted: $oldFilePath');
         } catch (_) {
-          print('No old image to delete or deletion failed');
+
         }
       }
 
@@ -117,11 +113,10 @@ class ProfileService {
           .update({'profilePic': imageUrl})
           .eq('id', userId);
 
-      print('Profile updated: $response');
     } on StorageException catch (e) {
-      throw Exception(e.message ?? 'Failed to upload image');
+      throw Exception(e.message);
     } on PostgrestException catch (e) {
-      throw Exception(e.message ?? 'Failed to update profile in database');
+      throw Exception(e.message);
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }
@@ -135,7 +130,6 @@ class ProfileService {
       await supabase.auth.signOut();
       final store = StoreUserData();
       store.clearData();
-      print("✅ User logged out successfully");
     } on AuthException catch (e) {
       throw Exception(e.message);
     } catch (e) {
@@ -143,110 +137,4 @@ class ProfileService {
     }
   }
 }
-
-// class ProfileApiService {
-//   final NetworkInfo networkInfo;
-//
-//   ProfileApiService({required this.networkInfo});
-//
-//   /// Base headers for Supabase REST API
-//   Map<String, String> get _headers => {
-//     'apikey': Environment.supabaseAnonKey,
-//     'Authorization': 'Bearer ${Environment.supabaseAnonKey}',
-//     'Content-Type': 'application/json',
-//   };
-//
-//   /// Fetch user profile by email
-//   Future<ProfileModel> fetchUserProfile() async {
-//     final connected = await networkInfo.isConnected;
-//     if (!connected) throw Exception('No Internet connection');
-//
-//     final storeUserData = StoreUserData();
-//     final email = storeUserData.getString(AppConstants.userEmail);
-//
-//     final url = Uri.parse(
-//         '${Environment.supabaseUrl}/rest/v1/${Environment.profileTable}?email=eq.$email&select=*');
-//
-//     final response = await http.get(url, headers: _headers);
-//
-//     if (response.statusCode == 200) {
-//       final data = jsonDecode(response.body) as List<dynamic>;
-//       if (data.isEmpty) throw Exception('Profile not found');
-//       return ProfileModel.fromMap(data.first);
-//     } else {
-//       throw Exception('Failed to fetch profile: ${response.body}');
-//     }
-//   }
-//
-//   /// Upload image to Supabase Storage using HTTP (via Supabase signed URL)
-//   Future<String> uploadProfileImage(String filePath) async {
-//     final connected = await networkInfo.isConnected;
-//     if (!connected) throw Exception('No Internet connection');
-//
-//     final fileName =
-//         '${DateTime.now().millisecondsSinceEpoch}_${filePath.split('/').last}';
-//     final bucketPath = '${Environment.supabaseProfileFolder}/$fileName';
-//
-//     final fileBytes = await File(filePath).readAsBytes();
-//
-//     final url = Uri.parse(
-//         '${Environment.supabaseUrl}/storage/v1/object/${Environment.projectName}/$bucketPath');
-//
-//     final response = await http.put(
-//       url,
-//       headers: {
-//         'Authorization': 'Bearer ${Environment.supabaseAnonKey}',
-//         'Content-Type': 'application/octet-stream',
-//       },
-//       body: fileBytes,
-//     );
-//
-//     if (response.statusCode != 200 && response.statusCode != 201) {
-//       throw Exception('Failed to upload image: ${response.body}');
-//     }
-//
-//     // Return public URL
-//     return '${Environment.supabaseUrl}/storage/v1/object/public/${Environment.projectName}/$bucketPath';
-//   }
-//
-//   /// Update user profile image URL in database
-//   Future<void> updateUserProfileImage(String userId, String imageUrl) async {
-//     final connected = await networkInfo.isConnected;
-//     if (!connected) throw Exception('No Internet connection');
-//
-//     final url = Uri.parse(
-//         '${Environment.supabaseUrl}/rest/v1/${Environment.profileTable}?id=eq.$userId');
-//
-//     final response = await http.patch(
-//       url,
-//       headers: _headers,
-//       body: jsonEncode({'profilePic': imageUrl}),
-//     );
-//
-//     if (response.statusCode != 200) {
-//       throw Exception('Failed to update profile: ${response.body}');
-//     }
-//
-//     print('Profile updated successfully');
-//   }
-//
-//   /// Log out user
-//   Future<void> logOutUser() async {
-//     final connected = await networkInfo.isConnected;
-//     if (!connected) throw Exception('No Internet connection');
-//
-//     final url = Uri.parse('${Environment.supabaseUrl}/auth/v1/logout');
-//
-//     final response = await http.post(url, headers: _headers);
-//
-//     if (response.statusCode != 200) {
-//       throw Exception('Logout failed: ${response.body}');
-//     }
-//
-//     final store = StoreUserData();
-//     store.clearData();
-//
-//     print('✅ User logged out successfully');
-//   }
-// }
 

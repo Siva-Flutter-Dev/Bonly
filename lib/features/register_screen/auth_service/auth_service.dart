@@ -4,27 +4,29 @@ import '../../../data/services/environment.dart';
 
 class RegisterService {
   final NetworkInfo networkInfo;
-  late final SupabaseClient supabase;
 
-  RegisterService({required this.networkInfo}) {
-    supabase = SupabaseClient(
-      Environment.supabaseUrl,
-      Environment.supabaseAnonKey,
-    );
-  }
+  RegisterService({required this.networkInfo});
 
-  Future<void> register({
+  Future<String> register({
     required String email,
     required String password,
     required String name,
   }) async {
     final connected = await networkInfo.isConnected;
-
     if (!connected) {
       throw Exception('No Internet connection');
     }
 
     try {
+      // Initialize once (ideally do this in main.dart, not here)
+      await Supabase.initialize(
+        url: Environment.supabaseUrl,
+        anonKey: Environment.supabaseAnonKey,
+        debug: true,
+      );
+
+      final supabase = Supabase.instance.client;
+
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
@@ -32,16 +34,30 @@ class RegisterService {
       );
 
       if (response.user != null) {
-        print('✅ User registered successfully: ${response.user!.email}');
+        print('✅ User registered: ${response.user!.id}');
+      } else if (response.session == null && response.user == null) {
+        // Signup succeeded but requires email confirmation
+        print('⚠️ User must confirm email. Check your inbox.');
       } else {
-        print('⚠️ Registration returned null user');
+        throw Exception('Auth failed: ${response.session?.isExpired}');
       }
+
+
+      // Insert profile
+      final r = await supabase.from(Environment.profileTable).insert({
+        'name': name,
+        'email': email,
+        'loginUserId': response.user!.id,
+      });
+
+      print('Profile insert: $r');
+
+      return response.user!.id;
     } on AuthException catch (e) {
-      print('❌ Registration failed: ${e.message}');
-      throw Exception(e.message ?? 'Registration failed');
+      throw Exception('Auth error: ${e.message}');
     } catch (e) {
-      print('❌ Unexpected error: $e');
-      throw Exception('Registration failed');
+      print(e);
+      throw Exception('Registration failed: $e');
     }
   }
 }

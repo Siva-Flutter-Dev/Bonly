@@ -23,9 +23,6 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
       email: email,
       password: password,
     );
-    print("Data Source=====Success");
-    print("===========");
-    print("email :$email, pass :$password");
     return LoginModel(
       id: 'N/A',
       email: email,

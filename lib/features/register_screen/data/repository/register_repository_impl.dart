@@ -1,3 +1,4 @@
+import 'package:bondly/features/register_screen/domain/entities/profile_entity.dart';
 import 'package:bondly/features/register_screen/domain/entities/user_entities.dart';
 import 'package:dartz/dartz.dart';
 
@@ -26,5 +27,11 @@ class RegisterRepositoryImpl implements RegisterRepository {
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
+  }
+
+  @override
+  Future<Either<Failure, ProfileSaveEntity>> profileSave({required String name, required String email, required String? id}) {
+    // TODO: implement profileSave
+    throw UnimplementedError();
   }
 }
