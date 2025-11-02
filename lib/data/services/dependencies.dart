@@ -11,5 +11,6 @@ class AppInjector{
     di.registerInit();
     di.profileInit();
     di.editProfileInit();
+    di.blogInit();
   }
 }

@@ -16,28 +16,26 @@ import '../bloc/register_state.dart';
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
 
-  final _formKey = GlobalKey<FormState>();
   final emailCtl = TextEditingController();
   final passwordCtl = TextEditingController();
   final confirmPasswordCtl = TextEditingController();
   final nameCtl = TextEditingController();
 
   void _onRegisterPressed(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      BlocProvider.of<RegisterBloc>(context).add(
-        RegisterButtonPressed(
-          name: nameCtl.text,
-          email: emailCtl.text,
-          password: passwordCtl.text,
-        ),
-      );
-    }
+    BlocProvider.of<RegisterBloc>(context).add(
+      RegisterButtonPressed(
+        name: nameCtl.text,
+        email: emailCtl.text,
+        password: passwordCtl.text,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final currentWidth = context.mediaQueryWidth;
     final isMobile = context.isMobile();
+    final bloc = context.read<RegisterBloc>();
 
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) {
@@ -78,50 +76,65 @@ class RegisterScreen extends StatelessWidget {
                 Container(
                   padding: isMobile ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   margin: isMobile ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      spacing: 20,
-                      children: [
-                        CTextField(
-                          controller: nameCtl,
-                          label: "Name",
-                          validator: (val) => val == null || val.isEmpty ? 'Enter name' : null,
-                          prefixIcon: Icon(CupertinoIcons.person, color: AppTheme.black.withValues(alpha: 0.2)),
-                        ),
-                        CTextField(
-                          controller: emailCtl,
-                          label: "Email",
-                          validator: (val) => val == null || !AppValidators.isEmailValid(val) ? 'Enter valid email' : null,
-                          prefixIcon: Icon(CupertinoIcons.mail, color: AppTheme.black.withValues(alpha: 0.2)),
-                        ),
-                        CTextField(
-                          controller: passwordCtl,
-                          label: "Password",
-                          obscureText: !state.isPasswordVisible,
-                          validator: (val) => val == null || val.length < 6 ? 'Min 6 characters' : null,
-                          suffixIcon: GestureDetector(
-                              onTap: (){
-                                context.read<RegisterBloc>().add(TogglePasswordRegister());
-                              },
-                              child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
-                          prefixIcon: Icon(CupertinoIcons.lock_circle, color: AppTheme.black.withValues(alpha: 0.2)),
-                        ),
-                        CTextField(
-                          controller: confirmPasswordCtl,
-                          label: "Confirm Password",
-                          obscureText: true,
-                          validator: (val) => val == null || val != passwordCtl.text ? 'Not match' : null,
-                          prefixIcon: Icon(CupertinoIcons.lock_circle, color: AppTheme.black.withValues(alpha: 0.2)),
-                        ),
-                        const SizedBox(height: 10),
-                        PrimaryButton(
-                          isLoading: state is RegisterLoading,
-                          value: "Register",
-                          onTab: ()=>_onRegisterPressed(context),
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    spacing: 20,
+                    children: [
+                      CTextField(
+                        controller: nameCtl,
+                        label: "Name",
+                        errorText: state.nameError,
+                        prefixIcon: Icon(CupertinoIcons.person, color: AppTheme.black.withValues(alpha: 0.2)),
+                        onChange: (value){
+                          bloc.add(NameChangedRegister(value));
+                        },
+                      ),
+                      CTextField(
+                        controller: emailCtl,
+                        label: "Email",
+                        errorText: state.emailError,
+                        prefixIcon: Icon(CupertinoIcons.mail, color: AppTheme.black.withValues(alpha: 0.2)),
+                        onChange: (value){
+                          bloc.add(EmailChangedRegister(value));
+                        },
+                      ),
+                      CTextField(
+                        controller: passwordCtl,
+                        label: "Password",
+                        errorText: state.passwordError,
+                        obscureText: !state.isPasswordVisible,
+                        suffixIcon: GestureDetector(
+                            onTap: (){
+                              bloc.add(TogglePasswordRegister());
+                            },
+                            child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
+                        prefixIcon: Icon(CupertinoIcons.lock_circle, color: AppTheme.black.withValues(alpha: 0.2)),
+                        onChange: (value){
+                          bloc.add(PasswordChangedRegister(value));
+                        },
+                      ),
+                      CTextField(
+                        controller: confirmPasswordCtl,
+                        label: "Confirm Password",
+                        errorText: state.confirmPasswordError,
+                        obscureText: !state.isConfirmPasswordVisible,
+                        suffixIcon: GestureDetector(
+                            onTap: (){
+                              bloc.add(ToggleConfirmPasswordRegister());
+                            },
+                            child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
+                        prefixIcon: Icon(CupertinoIcons.lock_circle, color: AppTheme.black.withValues(alpha: 0.2)),
+                        onChange: (value){
+                          bloc.add(ConfirmPasswordChangedRegister(passwordCtl.text,value));
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      PrimaryButton(
+                        isLoading: state is RegisterLoading,
+                        value: "Register",
+                        isDisable: (state.nameError!=null || state.emailError!=null || state.passwordError!=null || state.confirmPasswordError!=null || passwordCtl.text.isEmpty || emailCtl.text.isEmpty || nameCtl.text.isEmpty || confirmPasswordCtl.text.isEmpty),
+                        onTab: ()=>_onRegisterPressed(context),
+                      ),
+                    ],
                   ),
                 ),
               ],

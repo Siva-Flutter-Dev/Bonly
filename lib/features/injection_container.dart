@@ -1,3 +1,8 @@
+import 'package:bondly/features/blog_page/data/repository_impl/blog_repository_impl.dart';
+import 'package:bondly/features/blog_page/data/service/blog_service.dart';
+import 'package:bondly/features/blog_page/domain/repository/blog_repository.dart';
+import 'package:bondly/features/blog_page/domain/usecases/blog_usecase.dart';
+import 'package:bondly/features/blog_page/presentation/bloc/blog_bloc.dart';
 import 'package:bondly/features/edit_profile/data/repository_impl/edit_profile_repository_impl.dart';
 import 'package:bondly/features/edit_profile/data/service/edit_profile_service.dart';
 import 'package:bondly/features/edit_profile/domain/repository/edit_profile_repository.dart';
@@ -128,6 +133,24 @@ void editProfileInit(){
   sl.registerFactory(() => EditProfileBloc(
       editProfileCase: sl()
   ));
+
+}
+
+void blogInit(){
+
+// Service
+  sl.registerLazySingleton(() => BlogService(networkInfo: sl()));
+
+// Repository
+  sl.registerLazySingleton<BlogRepository>(
+        () => BlogRepositoryImpl(sl()),
+  );
+
+// UseCases
+  sl.registerLazySingleton(() => GetBlogs(sl()));
+
+// Bloc
+  sl.registerFactory(() => BlogBloc(getBlogs: sl()));
 
 }
 

@@ -25,7 +25,13 @@ class LoginScreen extends StatelessWidget {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-          Routing.replace(location: AppRouteConstants.homeRoute, context: context);
+          Routing.replace(
+              location: AppRouteConstants.homeRoute,
+              context: context,
+            values: {
+                'name':state.email?.split('@').first??"User"
+            }
+          );
           final bloc = context.read<LoginBloc>();
           bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
         } else if (state is LoginFailure) {

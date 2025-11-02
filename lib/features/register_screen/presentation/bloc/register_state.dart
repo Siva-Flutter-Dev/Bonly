@@ -2,25 +2,41 @@ import 'package:bondly/features/register_screen/domain/entities/user_entities.da
 
 abstract class RegisterState {
   final bool isPasswordVisible;
-  RegisterState(this.isPasswordVisible);
+  final bool isConfirmPasswordVisible;
+  final String? nameError;
+  final String? emailError;
+  final String? passwordError;
+  final String? confirmPasswordError;
+  RegisterState({
+    required this.isPasswordVisible,
+    required this.isConfirmPasswordVisible,
+    required this.nameError,
+    required this.emailError,
+    required this.passwordError,
+    required this.confirmPasswordError,
+  });
 }
 
 class RegisterInitial extends RegisterState {
-  RegisterInitial(super.isPasswordVisible);
+  RegisterInitial({required super.isPasswordVisible, required super.isConfirmPasswordVisible, required super.nameError, required super.emailError, required super.passwordError, required super.confirmPasswordError});
 }
 
 class RegisterLoading extends RegisterState {
-  RegisterLoading(super.isPasswordVisible);
+  RegisterLoading({required super.isPasswordVisible, required super.isConfirmPasswordVisible, required super.nameError, required super.emailError, required super.passwordError, required super.confirmPasswordError});
+}
+
+class OnChangeState extends RegisterState{
+  OnChangeState({required super.isPasswordVisible, required super.isConfirmPasswordVisible, required super.nameError, required super.emailError, required super.passwordError, required super.confirmPasswordError});
 }
 
 class RegisterSuccess extends RegisterState {
   final RegisterEntity result;
 
-  RegisterSuccess(super.isPasswordVisible, {required this.result});
+  RegisterSuccess({required this.result, required super.isPasswordVisible, required super.isConfirmPasswordVisible, required super.nameError, required super.emailError, required super.passwordError, required super.confirmPasswordError});
 }
 
 class RegisterFailure extends RegisterState {
   final String message;
 
-  RegisterFailure(super.isPasswordVisible, {required this.message});
+  RegisterFailure({required this.message, required super.isPasswordVisible, required super.isConfirmPasswordVisible, required super.nameError, required super.emailError, required super.passwordError, required super.confirmPasswordError});
 }

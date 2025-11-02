@@ -11,6 +11,8 @@ class AppTheme {
   static const Color lightColor = Color(0xFF8ECAE6);
   static const Color selectiveColor = Color(0xFFFFB703);
   static const Color extraColor = Color(0xFFFB8500);
+  static const Color red = Colors.red;
+  static const Color transparent = Colors.transparent;
 
   /// for text or additional uses
   static const Color black = Color(0xFF000000);

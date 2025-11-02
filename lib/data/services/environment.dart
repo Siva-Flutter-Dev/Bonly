@@ -13,7 +13,9 @@ class Environment {
   /// Tables
   // static const String appwriteProfileTable = 'profile';
   static const String profileTable = 'profileInformations';
+  static const String blogTable = 'blogs';
 
   /// Storage
   static const String supabaseProfileFolder = 'Profile';
+  static const String supabaseBlogFolder = 'Blogs';
 }

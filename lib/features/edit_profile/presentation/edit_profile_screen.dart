@@ -5,6 +5,7 @@ import 'package:bondly/core/utils/app_router.dart';
 import 'package:bondly/core/utils/extentions.dart';
 import 'package:bondly/features/edit_profile/presentation/bloc/edit_profile_bloc.dart';
 import 'package:bondly/features/edit_profile/presentation/bloc/edit_profile_state.dart';
+import 'package:bondly/shared/global_widgets/app_loader.dart';
 import 'package:bondly/shared/global_widgets/primary_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,16 +29,16 @@ class EditProfileScreen extends StatelessWidget {
     final descriptionCtl = TextEditingController(text: extras['description']);
     final isMobile = context.isMobile();
     // var currentWidth = context.mediaQueryWidth;
-    return Scaffold(
-      backgroundColor: AppTheme.white,
-      body: BlocConsumer<EditProfileBloc, EditProfileState>(
-        listener: (context, state){},
-        builder: (context, state){
-          final bloc = context.read<EditProfileBloc>();
-          if(state is EditProfileLoading){
-            return CircularProgressIndicator();
-          }else{
-            return Padding(
+    return BlocConsumer<EditProfileBloc, EditProfileState>(
+      listener: (context, state){},
+      builder: (context, state){
+        final bloc = context.read<EditProfileBloc>();
+        if(state is EditProfileLoading){
+          return AppLoader();
+        }else{
+          return Scaffold(
+            backgroundColor: AppTheme.white,
+            body: Padding(
               padding: const EdgeInsets.only(right: 16,left: 16,top: 60),
               child: Column(
                 spacing: 10,
@@ -45,18 +46,28 @@ class EditProfileScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CText(
-                        text:"Edit Profile",
-                        fontSize: isMobile?AppTheme.medium:AppTheme.big,
-                        fontWeight: FontWeight.w500,
+                      Row(
+                        spacing: 6,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Routing.back(context: context);
+                            },
+                              child: Icon(CupertinoIcons.back)),
+                          CText(
+                            text:"Edit Profile",
+                            fontSize: isMobile?AppTheme.medium:AppTheme.big,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
                       ),
                       if(!state.isEditProfileClicked)
-                      GestureDetector(
-                          onTap: (){
-                            bloc.add(EditableClick());
-                          },
-                          child: Image.asset(AssetsPath.editIcon,height: 24,width: 24,)
-                      ),
+                        GestureDetector(
+                            onTap: (){
+                              bloc.add(EditableClick());
+                            },
+                            child: Image.asset(AssetsPath.editIcon,height: 24,width: 24,)
+                        ),
                     ],
                   ),
                   Stack(
@@ -84,8 +95,8 @@ class EditProfileScreen extends StatelessWidget {
                           width: 100,
                           padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryColor,
-                            borderRadius: BorderRadius.circular(100)
+                              color: AppTheme.primaryColor,
+                              borderRadius: BorderRadius.circular(100)
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(100),
@@ -123,9 +134,9 @@ class EditProfileScreen extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: AppTheme.white,
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(color: AppTheme.secondaryColor)
+                              color: AppTheme.white,
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(color: AppTheme.secondaryColor)
                           ),
                           child: Icon(CupertinoIcons.camera,size: 18,),
                         ),
@@ -155,30 +166,30 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 40,),
                   PrimaryButton(
-                    value: "Save",
-                    onTab: (){
-                      bloc.add(EditProfileSubmitted(
-                          userId: extras['id'],
-                          name: nameCtl.text,
-                          description: descriptionCtl.text,
-                          profilePic: state.selectedImageFile
-                      ));
-                      Routing.back(
-                          context: context,
-                        values: {
-                          'name':nameCtl.text,
-                          'description':descriptionCtl.text,
-                        }
-                      );
-                      bloc.add(EditableClick());
-                    }
+                      value: "Save",
+                      onTab: (){
+                        bloc.add(EditProfileSubmitted(
+                            userId: extras['id'],
+                            name: nameCtl.text,
+                            description: descriptionCtl.text,
+                            profilePic: state.selectedImageFile
+                        ));
+                        Routing.back(
+                            context: context,
+                            values: {
+                              'name':nameCtl.text,
+                              'description':descriptionCtl.text,
+                            }
+                        );
+                        bloc.add(EditableClick());
+                      }
                   )
                 ],
               ),
-            );
-          }
-        },
-      ),
+            ),
+          );
+        }
+      },
     );
   }
 }

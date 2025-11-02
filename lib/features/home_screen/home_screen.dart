@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blog_detail_screen/blog_detail_screen.dart';
+import '../blog_page/presentation/screen/blog_screen.dart';
 import 'home_bloc/home_bloc.dart';
 import 'home_bloc/home_event.dart';
 import 'home_bloc/home_state.dart';
@@ -18,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      const BlogDetailScreen(),
+      BlogScreen(extra: extra,),
       ProfileScreen(extra: extra??{},),
     ];
     final isMobile = context.isMobile();
@@ -92,7 +93,7 @@ class HomeScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(width: 5),
                                         CText(
-                                          text: entry.key == 0 ? "Detail" : "Profile",
+                                          text: entry.key == 0 ? "Blogs" : "Profile",
                                           textColor: AppTheme.white,
                                           fontSize: isMobile?AppTheme.medium:AppTheme.big,
                                           fontWeight: FontWeight.w500,

@@ -5,6 +5,7 @@ import 'package:bondly/core/utils/assets_constants.dart';
 import 'package:bondly/core/utils/extentions.dart';
 import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
 import 'package:bondly/features/profile_screen/presentation/bloc/profile_state.dart';
+import 'package:bondly/shared/global_widgets/app_loader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
         builder: (context, state) {
           final bloc = context.read<ProfileBloc>();
           if (state is ProfileLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return AppLoader();
           }else if (state is ProfileLoaded) {
             final profile = state.profile;
             return Padding(

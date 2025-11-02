@@ -1,8 +1,11 @@
+import 'package:bondly/features/blog_page/domain/usecases/blog_usecase.dart';
+import 'package:bondly/features/blog_page/presentation/bloc/blog_bloc.dart';
 import 'package:bondly/features/edit_profile/presentation/bloc/edit_profile_bloc.dart';
 import 'package:bondly/features/login_screen/presentation/bloc/login_bloc.dart';
 import 'package:bondly/features/profile_screen/presentation/bloc/profile_bloc.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../features/blog_page/presentation/bloc/blog_event.dart';
 import '../../features/injection_container.dart' as di;
 import '../../features/profile_screen/domain/usecase/logout.dart';
 import '../../features/profile_screen/domain/usecase/profile_usecase.dart';
@@ -29,6 +32,11 @@ class BlocInit{
     ),
     BlocProvider<EditProfileBloc>(
       create: (_) => di.sl<EditProfileBloc>(),
+    ),
+    BlocProvider<BlogBloc>(
+      create: (_) => BlogBloc(
+          getBlogs: di.sl<GetBlogs>()
+      ),
     )
   ];
 }

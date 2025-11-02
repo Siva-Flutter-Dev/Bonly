@@ -4,6 +4,8 @@ import 'package:bondly/core/themes/app_theme.dart';
 class AssetsPath{
   /// Splash Screen
   static const String splashIcon = "${AppTheme.assets}splash_icon.png";
+  ///Loader
+  static const String loadIcon = "${AppTheme.assets}load_image.png";
 
   /// Welcome Screen
   static const String welcomeIcon1 = "${AppTheme.assets}welcome1.png";

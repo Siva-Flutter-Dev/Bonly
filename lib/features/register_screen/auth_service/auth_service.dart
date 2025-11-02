@@ -18,7 +18,6 @@ class RegisterService {
     }
 
     try {
-      // Initialize once (ideally do this in main.dart, not here)
       await Supabase.initialize(
         url: Environment.supabaseUrl,
         anonKey: Environment.supabaseAnonKey,
@@ -47,6 +46,7 @@ class RegisterService {
       final r = await supabase.from(Environment.profileTable).insert({
         'name': name,
         'email': email,
+        'description': 'Hey Iam Using Bonly!',
         'loginUserId': response.user!.id,
       });
 

@@ -29,6 +29,7 @@ class WelcomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CarouselSliderWidget(
+              viewportFraction: 1,
               items: images.map((e){
                 return Image.asset(
                     height: isMobile?currentWidth:currentWidth,
