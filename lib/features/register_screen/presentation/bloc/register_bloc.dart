@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/validators/validators.dart';
-import '../../domain/usecases/profile_save_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import 'register_event.dart';
 import 'register_state.dart';

@@ -54,102 +54,103 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 children: [
                   AuthBanner(),
-                  CText(
-                    padding: EdgeInsets.only(top: 40,bottom: 10),
-                    text: "Let’s get you sign in",
-                    fontSize: isMobile?AppTheme.big:AppTheme.ultraBig,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  CText(
-                    padding: EdgeInsets.only(left: 16,right: 16,bottom: 25),
-                    text: "Post freely, read securely — all within your private circle",
-                    fontSize: isMobile?AppTheme.large:AppTheme.big,
-                    fontWeight: FontWeight.w400,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.visible,
-                    textColor: AppTheme.black.withValues(alpha: 0.5),
-                  ),
-                  Container(
-                    padding: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: 40,vertical: 20),
-                    margin: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: 40,vertical: 20),
-                    child: Column(
-                      spacing: 20,
-                      children: [
-                        CTextField(
-                          controller: emailCtl,
-                          label: "Email",
-                          errorText: state.email,
-                          prefixIcon: Icon(CupertinoIcons.mail,color: AppTheme.black.withValues(alpha: 0.2),),
-                          onChange: (v){
-                            if (state is LoginFailure) {
-                              bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
-                            }else{
-                              bloc.add(EmailChangedLogin(v));
-                            }
-                          },
-                        ),
-                        CTextField(
-                          controller: passwordCtl,
-                          label: "Password",
-                          obscureText: !state.isPasswordVisible,
-                          errorText: state.password,
-                          suffixIcon: GestureDetector(
-                            onTap: (){
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.only(bottom:MediaQuery.of(context).viewInsets.bottom),
+                      child: Column(
+                        spacing: 20,
+                        children: [
+                          CText(
+                            padding: EdgeInsets.only(top: 40,bottom: 10),
+                            text: "Let’s get you sign in",
+                            fontSize: isMobile?AppTheme.big:AppTheme.ultraBig,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          CText(
+                            padding: EdgeInsets.only(left: 16,right: 16,bottom: 25),
+                            text: "Post freely, read securely — all within your private circle",
+                            fontSize: isMobile?AppTheme.large:AppTheme.big,
+                            fontWeight: FontWeight.w400,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.visible,
+                            textColor: AppTheme.black.withValues(alpha: 0.5),
+                          ),
+                          CTextField(
+                            controller: emailCtl,
+                            label: "Email",
+                            errorText: state.email,
+                            prefixIcon: Icon(CupertinoIcons.mail,color: AppTheme.black.withValues(alpha: 0.2),),
+                            onChange: (v){
                               if (state is LoginFailure) {
                                 bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
                               }else{
-                                bloc.add(TogglePassword());
+                                bloc.add(EmailChangedLogin(v));
                               }
                             },
-                              child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
-                          prefixIcon: Icon(CupertinoIcons.lock_circle,color: AppTheme.black.withValues(alpha: 0.2),),
-                          onChange: (v){
-                            if (state is LoginFailure) {
-                              bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
-                            }else{
-                              bloc.add(PasswordChangedLogin(v));
-                            }
-                          },
-                        ),
-                        SizedBox(height: 10,),
-                        PrimaryButton(
-                          isLoading: state is LoginLoading?true:false,
-                          value: "Login",
-                          isDisable: (state.email!=null || state.password!=null || passwordCtl.text.isEmpty || emailCtl.text.isEmpty),
-                          onTab: (){
-                            if (state.email==null && state.password==null) {
-                              bloc.add(
-                                LoginSubmitted(
-                                  email: emailCtl.text,
-                                  password: passwordCtl.text,
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CText(
-                              text: "Haven’t registered yet? ",
-                              fontSize: isMobile?AppTheme.medium:AppTheme.big,
-                              fontWeight: FontWeight.w400,
-                              textColor: AppTheme.black,
-                            ),
-                            GestureDetector(
+                          ),
+                          CTextField(
+                            controller: passwordCtl,
+                            label: "Password",
+                            obscureText: !state.isPasswordVisible,
+                            errorText: state.password,
+                            suffixIcon: GestureDetector(
                               onTap: (){
-                                Routing.push(location: AppRouteConstants.registerRoute, context: context);
+                                if (state is LoginFailure) {
+                                  bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
+                                }else{
+                                  bloc.add(TogglePassword());
+                                }
                               },
-                              child: CText(
-                                text: "Register",
+                                child: Icon(state.isPasswordVisible?CupertinoIcons.eye:CupertinoIcons.eye_slash,color: AppTheme.black.withValues(alpha: 0.2),size: 18,)),
+                            prefixIcon: Icon(CupertinoIcons.lock_circle,color: AppTheme.black.withValues(alpha: 0.2),),
+                            onChange: (v){
+                              if (state is LoginFailure) {
+                                bloc.emit(LoginInitial(state.isPasswordVisible, email: state.email, password: state.password));
+                              }else{
+                                bloc.add(PasswordChangedLogin(v));
+                              }
+                            },
+                          ),
+                          SizedBox(height: 10,),
+                          PrimaryButton(
+                            isLoading: state is LoginLoading?true:false,
+                            value: "Login",
+                            isDisable: (state.email!=null || state.password!=null || passwordCtl.text.isEmpty || emailCtl.text.isEmpty),
+                            onTab: (){
+                              if (state.email==null && state.password==null) {
+                                bloc.add(
+                                  LoginSubmitted(
+                                    email: emailCtl.text,
+                                    password: passwordCtl.text,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CText(
+                                text: "Haven’t registered yet? ",
                                 fontSize: isMobile?AppTheme.medium:AppTheme.big,
-                                fontWeight: FontWeight.w500,
-                                textColor: AppTheme.secondaryColor,
+                                fontWeight: FontWeight.w400,
+                                textColor: AppTheme.black,
                               ),
-                            )
-                          ],
-                        )
-                      ],
+                              GestureDetector(
+                                onTap: (){
+                                  Routing.push(location: AppRouteConstants.registerRoute, context: context);
+                                },
+                                child: CText(
+                                  text: "Register",
+                                  fontSize: isMobile?AppTheme.medium:AppTheme.big,
+                                  fontWeight: FontWeight.w500,
+                                  textColor: AppTheme.secondaryColor,
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   )
                 ],

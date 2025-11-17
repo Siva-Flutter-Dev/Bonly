@@ -2,7 +2,6 @@ import 'package:bondly/core/themes/app_theme.dart';
 import 'package:bondly/core/utils/utils.dart';
 import 'package:bondly/shared/global_widgets/text.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../../../domain/entities/blog_entitiy.dart';
 
 class BlogListCard extends StatelessWidget {

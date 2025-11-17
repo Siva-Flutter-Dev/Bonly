@@ -46,7 +46,7 @@ class BlogScreen extends StatelessWidget {
             child: Scaffold(
               backgroundColor: AppTheme.white,
               body: Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: const EdgeInsets.only(top: 60,left: 16,right: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
